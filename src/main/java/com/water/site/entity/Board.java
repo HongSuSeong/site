@@ -15,4 +15,20 @@ public class Board {
     private String title;
     private String content;
     private LocalDateTime createdDt;
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public LocalDateTime getCreatedDt() {
+        return createdDt;
+    }
 }
