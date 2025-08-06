@@ -1,20 +1,29 @@
 package com.water.site.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotEmpty;
 
 import java.time.LocalDateTime;
 
-
 @Entity
 public class Board {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @NotEmpty(message = "제목은 필수입니다.")
     private String title;
+
+    @NotEmpty(message = "내용은 필수입니다.")
     private String content;
-    private LocalDateTime createdDt;
+
+    @Column(updatable = false)
+    private LocalDateTime createdDate;
+
+    @PrePersist
+    public void prePersist() {
+        this.createdDate = LocalDateTime.now();
+    }
 
     public Long getId() {
         return id;
@@ -28,7 +37,23 @@ public class Board {
         return content;
     }
 
-    public LocalDateTime getCreatedDt() {
-        return createdDt;
+    public LocalDateTime getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public void setCreatedDate(LocalDateTime createdDate) {
+        this.createdDate = createdDate;
     }
 }
