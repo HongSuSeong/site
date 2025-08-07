@@ -47,6 +47,13 @@ public class BoardController {
         return "redirect:/board/list";
     }
 
+    @GetMapping("/detail/{id}")
+    public String detail (@PathVariable("id") Long id,Model model) {
+        Board board = boardService.findById(id);
+        model.addAttribute("board", board);
+        return "/board/detail";
+    }
+
     @GetMapping("/modify/{id}")
     public String modifyForm (@PathVariable("id") Long id,Model model) {
         Board board = boardService.findById(id);
@@ -62,6 +69,6 @@ public class BoardController {
         }
         System.out.println("성공");
         boardService.update(id, board);
-        return "redirect:/board/modify/"+ id;
+        return "redirect:/board/detail/"+ id;
     }
 }
