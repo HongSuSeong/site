@@ -25,6 +25,5 @@ public class BoardService {
         Board board = findById(id);
         board.setTitle(updatedBoard.getTitle());
         board.setContent(updatedBoard.getContent());
-        // JPA dirty checking 으로 자동 업데이트 (save 안 해도 됨)
     }
 }

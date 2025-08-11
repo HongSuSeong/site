@@ -69,6 +69,6 @@ public class BoardController {
         }
         System.out.println("성공");
         boardService.update(id, board);
-        return "redirect:/board/detail/"+ id;
+        return "redirect:/board/detail/" + id;
     }
 }
