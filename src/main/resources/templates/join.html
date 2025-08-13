@@ -1,11 +1,56 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head><title>회원가입</title></head>
+<style>
+    body {
+        font-family : 'gulim', 'gothic'
+    }
+</style>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script th:inline="javascript">
+    function idCheck() {
+        $.ajax({
+            url: "/check",
+            type: "post",
+            data: {"username" : $("#username").val()},
+            success: function (data) {
+                if (data) {
+                    $("#messageId").text("사용가능한 아이디 입니다.");
+                    $("#join").prop('disabled', false);
+                } else {
+                    $("#messageId").text("이미 존재하는 아이디 입니다.");
+                    $("#join").prop('disabled', true);
+                }
+            },
+            error: function (err) {
+                console.log(err);
+            }
+        });
+    }
+    // function passwordCheck() {
+    //     if ($("#password").val() == $("#passwordChk").val()) {
+    //         $("#messagePw").text("");
+    //         $("#join").prop('disabled', false);
+    //     } else {
+    //         $("#messagePw").text("비밀번호가 일치하지 않습니다.");
+    //         $("#join").prop('disabled', true);
+    //     }
+    // }
+    function onlyAlphaNum(input) {
+        const regex = /^[A-Za-z0-9_]*$/;
+        if (!regex.test(input.value)) {
+            input.value = input.value.replace(/[^A-Za-z0-9_]/g, '');
+        }
+    }
+</script>
 <body>
 <h1>회원가입</h1>
 <form th:action="@{/join}" th:object="${user}" method="post">
-    <input th:field="*{username}" placeholder="아이디" required/>
+    <input th:field="*{username}" placeholder="아이디" th:onblur="idCheck()" oninput="onlyAlphaNum(this)" required/>
+    <div id="messageId"></div>
     <input th:field="*{password}" type="password" placeholder="비밀번호" required/>
+<!--    <input id="passwordChk" type="password" placeholder="비밀번호확인" th:onblur="passwordCheck()" required/>-->
+    <div id="messagePw"></div>
     <input th:field="*{email}" type="email" placeholder="이메일" required/>
     <input th:field="*{name}" placeholder="이름"/>
     <button type="submit">가입</button>
