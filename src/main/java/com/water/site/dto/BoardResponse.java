@@ -1,9 +1,14 @@
 package com.water.site.dto;
 
-import lombok.Getter;
+import java.time.LocalDateTime;
 
-@Getter
-public class BoardResponse {
-    private String title;
-    private String content;
-}
+public record BoardResponse(
+        Long id,
+        String title,
+        String content,
+        String authorUsername,
+        int viewCount,
+        int likeCount,
+        LocalDateTime createdAt,
+        LocalDateTime updatedAt
+) {}

@@ -1,12 +1,22 @@
 package com.water.site.repository;
 
-import com.water.site.entity.Board;
+
+import com.water.site.entity.BoardEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
-import java.util.List;
+public interface BoardRepository extends JpaRepository<BoardEntity, Long> {
 
-@Repository
-public interface BoardRepository extends JpaRepository<Board, Long> {
-    List<Board> findAllByOrderByCreatedDateDesc();
+    Page<BoardEntity> findByTitleContainingIgnoreCaseOrContentContainingIgnoreCase(
+            String title, String content, Pageable pageable);
+
+
+    @Query("SELECT b FROM BoardEntity b JOIN b.author u " +
+            "WHERE LOWER(b.title) LIKE LOWER(CONCAT('%', :q, '%')) " +
+            "   OR LOWER(b.content) LIKE LOWER(CONCAT('%', :q, '%')) " +
+            "   OR LOWER(u.username) LIKE LOWER(CONCAT('%', :q, '%'))")
+    Page<BoardEntity> searchAll(@Param("q") String keyword, Pageable pageable);
 }
