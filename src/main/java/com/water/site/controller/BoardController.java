@@ -80,18 +80,20 @@ public class BoardController {
     /** 게시글 수정 처리 */
     @PostMapping("/edit/{id}")
     public String update(@PathVariable("id") Long id,
-                         @ModelAttribute BoardUpdateRequest req,
+                         @ModelAttribute("board") BoardUpdateRequest req,
+                         @AuthenticationPrincipal UserDetails user,
                          Model model) {
         try {
-            boardService.update(id, req);
+            boardService.update(id, req, user.getUsername());
             return "redirect:/boards/view/" + id;
-        } catch (AccessDeniedException e) {
-            System.out.println("a");
+        } catch (AccessDeniedException | IllegalArgumentException e) {
             model.addAttribute("error", e.getMessage());
-            return "boards/form";
-        } catch (IllegalArgumentException e) {
-            System.out.println("b");
-            model.addAttribute("error", e.getMessage());
+
+            // 원래 데이터 유지
+            BoardResponse board = boardService.get(id, false);
+            req.setTitle(board.title());
+            req.setContent(board.content());
+
             return "boards/form";
         }
     }

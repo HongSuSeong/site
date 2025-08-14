@@ -57,33 +57,17 @@ public class BoardService {
         return boardRepository.save(b).getId();
     }
 
-    public void update(Long id, BoardUpdateRequest req) throws AccessDeniedException {
+    public void update(Long id, BoardUpdateRequest req, String username) throws AccessDeniedException {
         BoardEntity b = boardRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
 
         String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
-
-        // 작성자 또는 관리자 확인
-        boolean isAuthor = b.getAuthor().getUsername().equals(currentUsername);
-        boolean isAdmin = SecurityContextHolder.getContext().getAuthentication()
-                .getAuthorities().stream()
-                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
-
-        if (!isAuthor && !isAdmin) {
-            throw new AccessDeniedException("작성자만 수정이 가능합니다.");
-        }
-
-        // 글 비밀번호가 설정돼 있다면 추가 검증(선택 정책)
-        if (b.getPassword() != null && !b.getPassword().isBlank()) {
-            String input = req.getPassword();
-            if (input == null || input.isBlank() || !passwordEncoder.matches(input, b.getPassword())) {
-                throw new IllegalArgumentException("글 비밀번호가 일치하지 않습니다.");
-            }
+        if (!b.getAuthor().getUsername().equals(currentUsername)) {
+            throw new AccessDeniedException("본인만 수정할 수 있습니다.");
         }
 
         b.setTitle(req.getTitle());
         b.setContent(req.getContent());
-        // updatedAt은 @PreUpdate로 처리
     }
 
     public void delete(Long id, String username, String passwordForDelete) throws AccessDeniedException {
@@ -91,10 +75,8 @@ public class BoardService {
         BoardEntity b = boardRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
 
-        // 현재 로그인 사용자 확인 (username 파라미터와 SecurityContext 모두 가능)
         String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
 
-        // 작성자 또는 관리자 확인
         boolean isAuthor = b.getAuthor().getUsername().equals(currentUsername);
         boolean isAdmin = SecurityContextHolder.getContext().getAuthentication()
                 .getAuthorities().stream()

@@ -20,3 +20,29 @@ CREATE TABLE verification_tokens (
     expiry_date TIMESTAMP NOT NULL,
     CONSTRAINT fk_token_user FOREIGN KEY(user_id) REFERENCES users(id)
 );
+
+CREATE TABLE login_history (
+                               id BIGINT PRIMARY KEY AUTO_INCREMENT,
+                               username VARCHAR(100),
+                               success BOOLEAN,
+                               ip VARCHAR(50),
+                               timestamp TIMESTAMP
+);
+
+-- 게시글 CRUD 기록
+CREATE TABLE board_history (
+                               id BIGINT PRIMARY KEY AUTO_INCREMENT,
+                               board_id BIGINT,
+                               username VARCHAR(100),
+                               action VARCHAR(50),   -- CREATE, UPDATE, DELETE
+                               timestamp TIMESTAMP
+);
+
+-- 게시글 조회 기록
+CREATE TABLE board_view_history (
+                                    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+                                    board_id BIGINT,
+                                    username VARCHAR(100),
+                                    ip VARCHAR(50),
+                                    timestamp TIMESTAMP
+);
