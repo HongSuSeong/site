@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>게시글 목록</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 p-4">
+
+<div class="max-w-5xl mx-auto">
+
+    <!-- 검색 -->
+    <form th:action="@{/boards/list}" method="get" class="flex flex-wrap gap-2 mb-6">
+        <input type="text" name="q" th:value="${q}" placeholder="검색어 입력"
+               class="flex-1 border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400">
+        <button type="submit"
+                class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">검색</button>
+        <a th:href="@{/boards/form}"
+           class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600">글쓰기</a>
+    </form>
+
+    <!-- 게시글 테이블 -->
+    <div class="overflow-x-auto bg-white rounded shadow">
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-100">
+            <tr>
+                <th class="px-4 py-2 text-left text-gray-600">번호</th>
+                <th class="px-4 py-2 text-left text-gray-600">제목</th>
+                <th class="px-4 py-2 text-left text-gray-600">작성자</th>
+                <th class="px-4 py-2 text-left text-gray-600">조회수</th>
+                <th class="px-4 py-2 text-left text-gray-600">작성일</th>
+            </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200">
+            <tr th:each="board, iterStat : ${page.content}" class="hover:bg-gray-50 cursor-pointer"
+                th:onclick="|window.location='/boards/view/' + [[${board.id}]]|">
+                <td class="px-4 py-2" th:text="${page.totalElements - iterStat.index - (page.number * page.size)}">1</td>
+                <td class="px-4 py-2" th:text="${board.title}">게시글 제목</td>
+                <td class="px-4 py-2" th:text="${board.name}">작성자</td>
+                <td class="px-4 py-2" th:text="${board.viewCount}">0</td>
+                <td class="px-4 py-2" th:text="${#temporals.format(board.createdAt, 'dd/MM/yyyy HH:mm')}">2025-08-14</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- 페이지네이션 -->
+    <div class="flex justify-center mt-6 space-x-1">
+        <a th:if="${page.hasPrevious()}" th:href="@{/boards/list(page=${page.number-1},q=${q})}"
+           class="px-3 py-1 border rounded hover:bg-gray-200">&laquo; 이전</a>
+        <span th:each="i : ${#numbers.sequence(0, page.totalPages-1)}">
+            <a th:href="@{/boards/list(page=${i},q=${q})}"
+               th:text="${i + 1}"
+               th:classappend="${i == page.number} ? 'bg-blue-500 text-white' : 'bg-white text-gray-700'"
+               class="px-3 py-1 border rounded hover:bg-gray-200"></a>
+        </span>
+        <a th:if="${page.hasNext()}" th:href="@{/boards/list(page=${page.number+1},q=${q})}"
+           class="px-3 py-1 border rounded hover:bg-gray-200">다음 &raquo;</a>
+    </div>
+
+</div>
+
+</body>
+</html>

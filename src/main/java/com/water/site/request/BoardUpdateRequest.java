@@ -6,9 +6,11 @@ import lombok.Setter;
 
 @Getter @Setter
 public class BoardUpdateRequest {
+    private Long id;
     @NotBlank
     private String title;
     @NotBlank
     private String content;
-    private String passwordForEdit;
+    @NotBlank
+    private String password;
 }

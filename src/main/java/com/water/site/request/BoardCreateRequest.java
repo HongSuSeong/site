@@ -5,6 +5,7 @@ import lombok.*;
 
 @Getter @Setter
 public class BoardCreateRequest {
+    private Long id;
     @NotBlank
     private String title;
     @NotBlank

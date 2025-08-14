@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${board.id} != null ? '게시글 수정' : '게시글 작성'">게시글 작성/수정</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 p-4">
+
+<div class="max-w-3xl mx-auto bg-white rounded shadow p-6">
+
+    <h1 class="text-2xl font-bold mb-6" th:text="${board.id} != null ? '게시글 수정' : '게시글 작성'">
+        게시글 작성
+    </h1>
+
+    <form th:action="${board.id} != null ? @{/boards/edit/{id}(id=${board.id})} : @{/boards/create}"
+          th:object="${board}" method="post">
+
+        <!-- 제목 -->
+        <div class="mb-4">
+            <label class="block text-gray-700 font-semibold mb-2" for="title">제목</label>
+            <input type="text" id="title" name="title" th:field="*{title}" placeholder="제목을 입력하세요"
+                   class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400">
+        </div>
+
+        <!-- 내용 -->
+        <div class="mb-4">
+            <label class="block text-gray-700 font-semibold mb-2" for="content">내용</label>
+            <textarea id="content" name="content" th:field="*{content}" rows="10" placeholder="내용을 입력하세요"
+                      class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"></textarea>
+        </div>
+
+        <!-- 비밀번호 -->
+        <div class="mb-6">
+            <label class="block text-gray-700 font-semibold mb-2" for="password">비밀번호</label>
+            <input type="password" id="password" name="password" th:field="*{password}" placeholder="게시글 비밀번호"
+                   class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400">
+        </div>
+
+        <!-- 버튼 -->
+        <div class="flex space-x-2">
+            <button type="submit"
+                    class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+                    th:text="${board.id} != null ? '수정' : '작성'">작성</button>
+
+            <a th:href="@{/boards/list}"
+               class="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400">목록으로</a>
+        </div>
+
+    </form>
+
+</div>
+</body>
+</html>

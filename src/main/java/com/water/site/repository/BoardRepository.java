@@ -16,7 +16,7 @@ public interface BoardRepository extends JpaRepository<BoardEntity, Long> {
 
     @Query("SELECT b FROM BoardEntity b JOIN b.author u " +
             "WHERE LOWER(b.title) LIKE LOWER(CONCAT('%', :q, '%')) " +
-            "   OR LOWER(b.content) LIKE LOWER(CONCAT('%', :q, '%')) " +
-            "   OR LOWER(u.username) LIKE LOWER(CONCAT('%', :q, '%'))")
+            "   OR LOWER(b.contentSearch) LIKE LOWER(CONCAT('%', :q, '%')) " +
+            "   OR LOWER(u.name) LIKE LOWER(CONCAT('%', :q, '%'))")
     Page<BoardEntity> searchAll(@Param("q") String keyword, Pageable pageable);
 }

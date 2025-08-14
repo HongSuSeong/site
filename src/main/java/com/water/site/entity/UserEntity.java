@@ -4,15 +4,18 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
-@Table(name = "users")
+@Table(name = "USERS")
 @Getter @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class UserEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name="user_id")
     private Long id;
 
     @Column(nullable=false, unique=true)
@@ -23,6 +26,9 @@ public class UserEntity {
 
     @Column(nullable=false, unique=true)
     private String email;
+
+    @OneToMany(mappedBy = "author")
+    private List<BoardEntity> boards = new ArrayList<>();
 
     private String name;
     private String role;

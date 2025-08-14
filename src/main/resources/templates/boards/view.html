@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>게시글 상세</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 p-4">
+
+<div class="max-w-3xl mx-auto bg-white rounded shadow p-6">
+
+    <!-- 제목 -->
+    <h1 class="text-2xl font-bold mb-4" th:text="${board.title}">게시글 제목</h1>
+
+    <!-- 에러 메시지 -->
+    <div id="errorMessage" class="mb-4 p-2 bg-red-100 text-red-700 rounded hidden" th:text="${errorMessage}"></div>
+
+    <!-- 작성 정보 -->
+    <div class="flex justify-between text-gray-500 text-sm mb-6">
+        <span th:text="'작성자: ' + ${board.name}">작성자: 홍길동</span>
+        <span th:text="'작성일: ' + ${#temporals.format(board.createdAt, 'dd/MM/yyyy HH:mm')}">작성일: 2025-08-14</span>
+    </div>
+
+    <!-- 내용 -->
+    <div class="prose mb-6" th:utext="${board.content}">
+        게시글 내용
+    </div>
+
+    <!-- 조회수/좋아요 -->
+    <div class="flex space-x-4 text-gray-600 mb-6">
+        <span th:text="'조회수: ' + ${board.viewCount}">조회수: 0</span>
+        <span th:text="'좋아요: ' + ${board.likeCount}">좋아요: 0</span>
+    </div>
+
+    <!-- 수정 / 삭제 버튼 -->
+    <div class="flex space-x-2 items-center">
+
+        <a th:href="@{/boards/edit/{id}(id=${board.id})}"
+           class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">수정</a>
+
+        <!-- 비밀번호 입력 (필요 시) -->
+        <input type="password" id="deletePassword" name="passwordForDelete"
+               placeholder="글 비밀번호 입력" class="border rounded px-2 py-1"/>
+
+        <button type="button" id="deleteBtn"
+                class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">
+            삭제
+        </button>
+
+        <a th:href="@{/boards/list}"
+           class="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400">목록으로</a>
+    </div>
+
+</div>
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    const deleteBtn = document.getElementById('deleteBtn');
+    const errorDiv = document.getElementById('errorMessage');
+
+    deleteBtn.addEventListener('click', () => {
+        if(!confirm('정말 삭제하시겠습니까?')) return;
+
+        const password = document.getElementById('deletePassword').value;
+
+        fetch([[${'/boards/delete-ajax/' + board.id}]], {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: new URLSearchParams({ passwordForDelete: password })
+        })
+            .then(res => res.json())
+            .then(data => {
+                if(data.success) {
+                    window.location.href = '/boards/list';
+                } else {
+                    errorDiv.textContent = data.message;
+                    errorDiv.classList.remove('hidden');
+                }
+            })
+            .catch(err => {
+                errorDiv.textContent = '삭제 중 오류가 발생했습니다.';
+                errorDiv.classList.remove('hidden');
+            });
+    });
+    /*]]>*/
+</script>
+
+</body>
+</html>
