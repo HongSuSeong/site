@@ -36,4 +36,7 @@ public class UserEntity {
     private String providerId;
     private boolean enabled;
     private LocalDateTime createdAt = LocalDateTime.now();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CommentEntity> comments = new ArrayList<>();
 }

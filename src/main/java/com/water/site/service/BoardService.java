@@ -32,7 +32,6 @@ public class BoardService {
                 : boardRepository.searchAll(q.trim(), pageable);
         return page.map(this::toDto);
     }
-
     public BoardResponse get(Long id, boolean increaseView) {
         BoardEntity b = boardRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
@@ -41,7 +40,10 @@ public class BoardService {
         }
         return toDto(b);
     }
-
+    public BoardEntity getEntity(Long id) {
+        return boardRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시글입니다."));
+    }
     public Long create(BoardCreateRequest req, String username) {
         UserEntity author = userRepository.findByUsername(username)
                 .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
@@ -56,7 +58,6 @@ public class BoardService {
                 .build();
         return boardRepository.save(b).getId();
     }
-
     public void update(Long id, BoardUpdateRequest req, String username) throws AccessDeniedException {
         BoardEntity b = boardRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
@@ -69,7 +70,6 @@ public class BoardService {
         b.setTitle(req.getTitle());
         b.setContent(req.getContent());
     }
-
     public void delete(Long id, String username, String passwordForDelete) throws AccessDeniedException {
         // 게시글 조회
         BoardEntity b = boardRepository.findById(id)
@@ -97,7 +97,6 @@ public class BoardService {
         // 삭제
         boardRepository.delete(b);
     }
-
     private BoardResponse toDto(BoardEntity b) {
         return new BoardResponse(
                 b.getId(),
@@ -107,7 +106,8 @@ public class BoardService {
                 b.getViewCount(),
                 b.getLikeCount(),
                 b.getCreatedAt(),
-                b.getUpdatedAt()
+                b.getUpdatedAt(),
+                b.getComments() != null ? b.getComments().size() : 0
         );
     }
 }

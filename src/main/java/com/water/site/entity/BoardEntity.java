@@ -3,6 +3,8 @@ package com.water.site.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "BOARD")
@@ -46,6 +48,9 @@ public class BoardEntity {
     @Column(name = "content_search", length = 1000)
     private String contentSearch;
 
+    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CommentEntity> comments = new ArrayList<>();
+
     @PrePersist
     void onCreate() {
         this.createdAt = LocalDateTime.now();
@@ -65,5 +70,3 @@ public class BoardEntity {
         }
     }
 }
-
-

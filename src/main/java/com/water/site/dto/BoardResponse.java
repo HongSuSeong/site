@@ -10,7 +10,8 @@ public record BoardResponse(
         int viewCount,
         int likeCount,
         LocalDateTime createdAt,
-        LocalDateTime updatedAt
+        LocalDateTime updatedAt,
+        int commentCount
 
 ) {
 }

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <title>게시글 상세</title>
@@ -51,6 +52,33 @@
            class="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400">목록으로</a>
     </div>
 
+</div>
+<!-- 댓글 목록 -->
+<div class="mt-8">
+    <h2 class="text-xl font-semibold mb-4">댓글</h2>
+
+    <div th:each="comment : ${comments}" class="mb-3 p-3 bg-gray-100 rounded-lg">
+        <p class="font-semibold text-gray-700" th:text="${comment.user.username}"></p>
+        <p class="text-gray-800" th:text="${comment.content}"></p>
+        <span class="text-sm text-gray-500"
+              th:text="${#temporals.format(comment.createdAt, 'yyyy-MM-dd HH:mm')}"></span>
+    </div>
+</div>
+
+<div sec:authorize="isAuthenticated()">
+    <form th:action="@{/comments/add}" method="post" class="mt-4 flex space-x-2">
+        <input type="hidden" name="boardId" th:value="${board.id}"/>
+        <input type="text" name="content" placeholder="댓글을 입력하세요"
+               class="flex-1 border rounded-lg px-3 py-2"/>
+        <button type="submit"
+                class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">
+            등록
+        </button>
+    </form>
+</div>
+
+<div sec:authorize="isAnonymous()">
+    <p class="text-gray-500">댓글 작성은 <a href="/login" class="text-blue-500">로그인</a> 후 가능합니다.</p>
 </div>
 
 <script th:inline="javascript">

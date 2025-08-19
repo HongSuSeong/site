@@ -1,9 +1,13 @@
 package com.water.site.controller;
 
 import com.water.site.dto.BoardResponse;
+import com.water.site.dto.CommentResponse;
+import com.water.site.entity.BoardEntity;
+import com.water.site.entity.CommentEntity;
 import com.water.site.request.BoardCreateRequest;
 import com.water.site.request.BoardUpdateRequest;
 import com.water.site.service.BoardService;
+import com.water.site.service.CommentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,6 +22,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.nio.file.AccessDeniedException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -26,6 +31,7 @@ import java.util.Map;
 public class BoardController {
 
     private final BoardService boardService;
+    private final CommentService commentService;
 
     /** 게시글 목록 */
     @GetMapping("/list")
@@ -56,7 +62,12 @@ public class BoardController {
     @GetMapping("/view/{id}")
     public String view(@PathVariable("id") Long id, Model model) {
         BoardResponse board = boardService.get(id, true);
+        BoardEntity boardEntity = boardService.getEntity(id);
+        List<CommentEntity> comments = commentService.getCommentsByBoard(boardEntity);
+
         model.addAttribute("board", board);
+        model.addAttribute("comments", comments);
+
         return "boards/view";
     }
 
